@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { AssignedCardsService } from './assigned-cards.service';
 import { CreateAssignedCardDto } from './dto/create-assigned-card.dto';
 import { UpdateAssignedCardDto } from './dto/update-assigned-card.dto';
@@ -13,8 +22,14 @@ export class AssignedCardsController {
   }
 
   @Get()
-  async findAll() {
-    return await this.assignedCardsService.findAll();
+  async findAll(
+    @Query('onlyFullyPunched') onlyFullyPunched = false,
+    @Query('onlyNotFullyPunched') onlyNotFullyPunched = false,
+  ) {
+    return await this.assignedCardsService.findAll(
+      onlyFullyPunched,
+      onlyNotFullyPunched,
+    );
   }
 
   @Get(':id')
@@ -22,10 +37,10 @@ export class AssignedCardsController {
     return await this.assignedCardsService.findOne(+id);
   }
 
-  @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateAssignedCardDto: UpdateAssignedCardDto) {
-    return await this.assignedCardsService.update(+id, updateAssignedCardDto);
-  }
+  // @Patch(':id')
+  // async update(@Param('id') id: string, @Body() updateAssignedCardDto: UpdateAssignedCardDto) {
+  //   return await this.assignedCardsService.update(+id, updateAssignedCardDto);
+  // }
 
   @Delete(':id')
   async remove(@Param('id') id: string) {

@@ -13,29 +13,50 @@ export class AssignedCardsService {
     private assignedCardRepository: Repository<AssignedCard>,
   ) {}
 
+  public isFullyPunched(card: AssignedCard): boolean {
+    return card.punches.length >= card.numberOfPunchBoxes;
+  }
+
   async create(createAssignedCardDto: CreateAssignedCardDto) {
     return await this.assignedCardRepository.save(createAssignedCardDto);
   }
 
-  async findAll() {
-    return (
-      await this.assignedCardRepository.find({
-        relations: [
-          'cardStack',
-          'cardStack.cardBlueprint',
-          'cardStack.cardBlueprint.cardBlueprintToRewards',
-          'cardStack.cardBlueprint.cardBlueprintToRewards.reward',
-        ],
-      })
-    ).map((assignedCard) => {
+  async findAll(
+    onlyFullyPunched = false,
+    onlyNotFullyPunched = false,
+    userId = '',
+  ) {
+    let cards = await this.assignedCardRepository.find({
+      relations: [
+        'cardStack',
+        'cardStack.cardBlueprint',
+        'cardStack.cardBlueprint.cardBlueprintToRewards',
+        'cardStack.cardBlueprint.cardBlueprintToRewards.reward',
+      ],
+    });
+
+    if (onlyFullyPunched) {
+      cards = cards.filter((card) => this.isFullyPunched(card));
+    }
+
+    if (onlyNotFullyPunched) {
+      cards = cards.filter((card) => !this.isFullyPunched(card));
+    }
+
+    if (userId?.length > 0) {
+      cards = cards.filter((card) => userId.trim() == card.userId);
+    }
+
+    return cards.map((assignedCard) => {
       const { cardStack, ...card } = assignedCard;
-      return {
-        ...card,
-        rewards:
-          assignedCard?.cardStack?.cardBlueprint?.cardBlueprintToRewards.map(
-            (blueprintToReward) => blueprintToReward.reward,
-          ),
-      };
+      // return {
+      //   ...card,
+      //   rewards:
+      //     assignedCard?.cardStack?.cardBlueprint?.cardBlueprintToRewards.map(
+      //       (blueprintToReward) => blueprintToReward.reward,
+      //     ),
+      // };
+      return card;
     });
   }
 
