@@ -25,10 +25,12 @@ export class AssignedCardsController {
   async findAll(
     @Query('onlyFullyPunched') onlyFullyPunched = false,
     @Query('onlyNotFullyPunched') onlyNotFullyPunched = false,
+    @Query('userId') userId: string,
   ) {
     return await this.assignedCardsService.findAll(
       onlyFullyPunched,
       onlyNotFullyPunched,
+      userId,
     );
   }
 
