@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CardStack } from 'src/card-stacks/entities/card-stack.entity';
 import { Repository } from 'typeorm';
 import { CreateAssignedCardDto } from './dto/create-assigned-card.dto';
 import { UpdateAssignedCardDto } from './dto/update-assigned-card.dto';
@@ -49,13 +48,6 @@ export class AssignedCardsService {
 
     return cards.map((assignedCard) => {
       const { cardStack, ...card } = assignedCard;
-      // return {
-      //   ...card,
-      //   rewards:
-      //     assignedCard?.cardStack?.cardBlueprint?.cardBlueprintToRewards.map(
-      //       (blueprintToReward) => blueprintToReward.reward,
-      //     ),
-      // };
       return card;
     });
   }
