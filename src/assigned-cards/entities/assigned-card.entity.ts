@@ -17,9 +17,7 @@ import {
 export class AssignedCard {
   @PrimaryGeneratedColumn()
   id: number;
-
   title: string;
-
   numberOfPunchBoxes: number;
 
   @Column()
